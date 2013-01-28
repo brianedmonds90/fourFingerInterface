@@ -83,19 +83,6 @@ class PtsContainer extends ArrayList<pt>{
     }
     return temp;
   }
-/*  void parseTouchEvent(MotionEvent me, int pointerId){
-    float x,y;
-    x = me.getX(pointerId);
-    y = me.getY(pointerId);
-    if(this.size()==0){
-      this.add(new pt(x,y));
-      return;
-    }
-    if(pointerId<this.size())
-      this.set(pointerId, new pt(x,y));
-    else
-      this.add(new pt(x,y));    
-  }*/
   PtsContainer findDifference(PtsContainer a, PtsContainer b){
     PtsContainer temp=new PtsContainer();
     for(int i=0;i<a.size();i++){
@@ -119,15 +106,7 @@ class PtsContainer extends ArrayList<pt>{
       }
     }
   }
-  //@params: pointerId> the Android pointerId that was lifted
-  //Method provides bookKeeping for updating pointerIndexes after a lift
-  void afterLift(int pointerId){
-    for(int i=0;i<this.size();i++){
-      if(this.get(i).meIndex>pointerId){
-       this.get(i).meIndex--; 
-      }  
-    }
-  }
+ 
 }
 
 

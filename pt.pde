@@ -36,10 +36,10 @@ class pt {
     this.y+=dy;
     
   }
- /* public void move(Vec delta){
+ public void move(pt delta){
     this.x+=delta.x;
     this.y+=delta.y;
-  }*/
+  }
   public void move(){
     this.x+=movement.x;
     this.y+=movement.y;

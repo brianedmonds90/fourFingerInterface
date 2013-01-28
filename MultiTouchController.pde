@@ -7,21 +7,17 @@ class MultiTouchController{//Used to process the android API touch events for ea
       currentTouches=new PtsContainer();  //populated with points caused by fingers currently on the screen
       fingers=new PtsContainer(); //circles to be drawn on the screen
       lastTouches=new PtsContainer(); //Used for movement
-      select=new ArrayList<Boolean>(numPts);
-      for(int i=0;i<numPts;i++){
-        select.add(false); 
-      }
       fingers.init();//Used for testing
    }
    public void touch(MotionEvent ev, int pointerId){//Method used when a touch event happens 
     pt currentTouch = new pt(ev.getX(pointerId),ev.getY(pointerId));//find the x and y coordinate of the touch event
-    //fingers.setSelected(fingers.closestPt(currentTouch),pointerId);//find the closest disk to the touch event
+    fingers.setSelected(fingers.closestPt(currentTouch),pointerId);//find the closest disk to the touch event
     lastTouches=lastTouches.parseTouchEvent(ev);//Keep track of the touch location for movement
-    select.set(fingers.closestPt(currentTouch),true);//Line in development
+   
   }
   public void lift(int pointerId){//Used when a finger is lifted
     fingers.lift(pointerId);
-    fingers.afterLift(pointerId);
+    afterLift(pointerId,fingers);
     currentTouches.clearAt(pointerId);
     lastTouches.clearAt(pointerId);
     
@@ -37,19 +33,19 @@ class MultiTouchController{//Used to process the android API touch events for ea
      lastTouches.set(currentTouches);
   }  
   void draw(){//Draws the fingers PtsContainer  
-    for(int i=0;i<fingers.size();i++){
-      if(select.get(i)){
-        fill(255,0,0);   
-      }
-      fingers.get(i).draw(); 
-      fill(0);
-    } 
+    fingers.draw(); 
   }
-  //This method will set the boolean value to false after a lift
-  void afterLift(int pointerId){
-    
+ 
+  //@params: pointerId> the Android pointerId that was lifted
+  //Method provides bookKeeping for updating pointerIndexes after a lift
+  void afterLift(int pointerId, PtsContainer a){
+    for(int i=0;i<a.size();i++){
+      if(a.get(i).meIndex>pointerId){
+        a.get(i).selected=false;
+        a.get(i).meIndex--; 
+      }  
+    }
   }
-  
   
   
 }
