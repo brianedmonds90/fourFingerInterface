@@ -4,7 +4,8 @@ MultiTouchController mc;
 pt test;
 void setup() {
  // size(displayWidth, displayHeight,  P3D);
-  mc=new MultiTouchController(4);
+  mc =new MultiTouchController(4);
+  mc.init(); 
   fill(0);
   stroke(100);
 }//End of setup
@@ -30,7 +31,11 @@ public boolean surfaceTouchEvent(MotionEvent me) {//Overwrite this android touch
   }
   case MotionEvent.ACTION_MOVE: {
       //Clear the current Touches arrayList 
-      mc.motion(me);
+         for(int i=0;i<me.getPointerCount();i++){
+         if(i>3)
+           break;
+         mc.motion(me,i);
+         }
       draw();
       break;
     }

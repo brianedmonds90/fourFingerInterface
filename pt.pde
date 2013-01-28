@@ -65,4 +65,8 @@ class pt {
     this.meIndex=-1;
     this.selected=false;
   }
+  void set(pt p){
+   this.x=p.x;
+   this.y=p.y; 
+  }
 }

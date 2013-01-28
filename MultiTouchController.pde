@@ -1,51 +1,79 @@
 class MultiTouchController{//Used to process the android API touch events for easy use by applications
-  PtsContainer currentTouches,fingers,lastTouches;//Internal storage objects for processing movement
-   ArrayList <Boolean>select;
-   ArrayList <Integer>pointerIndex;
-  // ArrayList <int>pointerIndex;
-   MultiTouchController(int numPts){
-      currentTouches=new PtsContainer();  //populated with points caused by fingers currently on the screen
-      fingers=new PtsContainer(); //circles to be drawn on the screen
-      lastTouches=new PtsContainer(); //Used for movement
-      fingers.init();//Used for testing
+   ArrayList <MultiTouch> mTContainer;//Container for MultiTouch objects
+   MultiTouchController(int num){
+      mTContainer=new ArrayList<MultiTouch>(num);
+      for(int i=0;i<num;i++){
+        mTContainer.add(new MultiTouch()); 
+      }
    }
-   public void touch(MotionEvent ev, int pointerId){//Method used when a touch event happens 
-    pt currentTouch = new pt(ev.getX(pointerId),ev.getY(pointerId));//find the x and y coordinate of the touch event
-    fingers.setSelected(fingers.closestPt(currentTouch),pointerId);//find the closest disk to the touch event
-    lastTouches=lastTouches.parseTouchEvent(ev);//Keep track of the touch location for movement
-   
+   public void init(){//Puts disk objects on the screen to be moved around
+     for(int i=0;i<4;i++){
+      mTContainer.set(i,new MultiTouch(i*100+50,i*100+50));
+    }
+   }
+  public void touch(MotionEvent ev, int pointerId){//Method used when a touch event happens 
+     
+    pt cTouch = new pt(ev.getX(pointerId),ev.getY(pointerId));//find the x and y coordinate of the touch event
+    int index= findClosest(cTouch); //find the closest disk to the touch event
+  
+    mTContainer.get(index).selected=true;
+    System.out.println("Disk: "+mTContainer.get(index).disk);
+    mTContainer.get(index).meIndex=pointerId;
+    mTContainer.get(index).lastTouch=cTouch; //Keep track of the touch location for movement
   }
   public void lift(int pointerId){//Used when a finger is lifted
-    fingers.lift(pointerId);
-    afterLift(pointerId,fingers);
-    currentTouches.clearAt(pointerId);
-    lastTouches.clearAt(pointerId);
-    
+    for(int i=0;i<mTContainer.size();i++){
+      if(mTContainer.get(i).meIndex==pointerId){
+          mTContainer.get(i).lift();
+          break;
+      }
+    }
+    afterLift(pointerId);   
   }
-  public void motion(MotionEvent me){//Used when a finger moves on the screen
-      //log the current position of the users fingers
-     PtsContainer temp = new PtsContainer();
-     currentTouches=currentTouches.parseTouchEvent(me);
-     //calculate the distance moved from the previous frame and update movement
-     temp=temp.findDifference(currentTouches, lastTouches);
-     fingers.updateMovement(temp);
-     fingers.movement();
-     lastTouches.set(currentTouches);
+  public int findClosest(pt aa){//Returns the index of the closest disk of the container to the 
+    int closest=0;
+    for(int i=0;i<mTContainer.size();i++){
+      if(mTContainer.get(closest).disk.distance(aa)>mTContainer.get(i).disk.distance(aa)){
+       //Make sure the pointer is not already selected by another touch event
+      /* if(mTContainer.get(i).selected&&i<size()-1){
+        closest=i++; 
+       }*/
+      // else{
+        closest=i;
+      //}
+     }
+    }
+    return closest; 
+  }
+  public void motion(MotionEvent me,int pointerId){//Used when a finger moves on the screen
+       int index=indexOf(pointerId);
+       //log the current position of the users fingers
+       mTContainer.get(index).currentTouch= new pt(me.getX(pointerId),me.getY(pointerId));
+      //calculate the distance moved from the previous frame and move the point
+       System.out.println("Inside movement");
+       mTContainer.get(index).movement(pointerId,me);
   }  
-  void draw(){//Draws the fingers PtsContainer  
-    fingers.draw(); 
+  void draw(){//Draws the disks  
+    for(int i=0;i<mTContainer.size();i++){
+      mTContainer.get(i).draw();
+    } 
   }
- 
   //@params: pointerId> the Android pointerId that was lifted
   //Method provides bookKeeping for updating pointerIndexes after a lift
-  void afterLift(int pointerId, PtsContainer a){
-    for(int i=0;i<a.size();i++){
-      if(a.get(i).meIndex>pointerId){
-        a.get(i).selected=false;
-        a.get(i).meIndex--; 
+  void afterLift(int pointerId){
+    for(int i=0;i<mTContainer.size();i++){
+      if(mTContainer.get(i).meIndex>pointerId){
+        mTContainer.get(i).meIndex--; 
       }  
     }
   }
-  
-  
+  int indexOf(int pointerId){
+    for(int i=0;i<mTContainer.size();i++){
+      if(mTContainer.get(i).meIndex==pointerId){
+        return i; 
+      }  
+    }
+    return -1;
+  }
+
 }
