@@ -24,7 +24,6 @@ class MultiTouch{
   
   }
   void movement(int pointerId, MotionEvent ev){
-    System.out.println("pointerId: "+pointerId);
     currentTouch=new pt(ev.getX(pointerId),ev.getY(pointerId));
     disk.move(currentTouch.subtract(lastTouch));
     lastTouch.set(currentTouch);
@@ -40,6 +39,12 @@ class MultiTouch{
      }
      this.disk.draw(); 
      fill(0);
+  }
+  String toString(){
+    String ret="";
+    ret+= "disk: "+disk;
+    ret+= " currentTouch: "+currentTouch+" lastTouch: "+lastTouch+" meIndex: "+meIndex+ "Selected: "+selected;
+   return ret; 
   }
   ArrayList getHistory(){
     //Need to implement

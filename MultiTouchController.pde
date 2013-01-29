@@ -1,5 +1,6 @@
 class MultiTouchController{//Used to process the android API touch events for easy use by applications
    ArrayList <MultiTouch> mTContainer;//Container for MultiTouch objects
+   MultiTouch temp;
    MultiTouchController(int num){
       mTContainer=new ArrayList<MultiTouch>(num);
       for(int i=0;i<num;i++){
@@ -11,13 +12,13 @@ class MultiTouchController{//Used to process the android API touch events for ea
       mTContainer.set(i,new MultiTouch(i*100+50,i*100+50));
     }
    }
-  public void touch(MotionEvent ev, int pointerId){//Method used when a touch event happens 
-     
+  public void touch(MotionEvent ev, int pointerId){//Method used when a touch event happens
+    if(pointerId>3)
+     return; 
     pt cTouch = new pt(ev.getX(pointerId),ev.getY(pointerId));//find the x and y coordinate of the touch event
     int index= findClosest(cTouch); //find the closest disk to the touch event
-  
+    
     mTContainer.get(index).selected=true;
-    System.out.println("Disk: "+mTContainer.get(index).disk);
     mTContainer.get(index).meIndex=pointerId;
     mTContainer.get(index).lastTouch=cTouch; //Keep track of the touch location for movement
   }
@@ -25,32 +26,31 @@ class MultiTouchController{//Used to process the android API touch events for ea
     for(int i=0;i<mTContainer.size();i++){
       if(mTContainer.get(i).meIndex==pointerId){
           mTContainer.get(i).lift();
-          break;
       }
+      /*else if(mTContainer.get(i).meIndex>pointerId){
+         mTContainer.get(i).meIndex--; 
+      }*/
     }
-    afterLift(pointerId);   
+     afterLift(pointerId);   
   }
   public int findClosest(pt aa){//Returns the index of the closest disk of the container to the 
     int closest=0;
-    for(int i=0;i<mTContainer.size();i++){
+    for(int i=1;i<mTContainer.size();i++){
       if(mTContainer.get(closest).disk.distance(aa)>mTContainer.get(i).disk.distance(aa)){
        //Make sure the pointer is not already selected by another touch event
-      /* if(mTContainer.get(i).selected&&i<size()-1){
-        closest=i++; 
-       }*/
-      // else{
-        closest=i;
-      //}
+        if(!mTContainer.get(i).selected){
+         closest=i;
+         }
      }
     }
     return closest; 
   }
+ 
   public void motion(MotionEvent me,int pointerId){//Used when a finger moves on the screen
        int index=indexOf(pointerId);
        //log the current position of the users fingers
        mTContainer.get(index).currentTouch= new pt(me.getX(pointerId),me.getY(pointerId));
       //calculate the distance moved from the previous frame and move the point
-       System.out.println("Inside movement");
        mTContainer.get(index).movement(pointerId,me);
   }  
   void draw(){//Draws the disks  
@@ -67,6 +67,14 @@ class MultiTouchController{//Used to process the android API touch events for ea
       }  
     }
   }
+  String toString(){
+    String ret="";
+    for(int i=0;i<mTContainer.size();i++){ 
+      ret+="Multitouch: "+mTContainer.get(i);
+      ret+="\n";
+    }
+    return ret;
+  }
   int indexOf(int pointerId){
     for(int i=0;i<mTContainer.size();i++){
       if(mTContainer.get(i).meIndex==pointerId){
@@ -74,6 +82,5 @@ class MultiTouchController{//Used to process the android API touch events for ea
       }  
     }
     return -1;
-  }
-
+  } 
 }
