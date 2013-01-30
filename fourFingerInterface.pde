@@ -7,20 +7,20 @@ void setup() {
  // size(displayWidth, displayHeight,  P3D);
   mc =new MultiTouchController(4);
   mc.init();
-  //size(displayWidth,displayHeight,P3D);
-  //img = loadImage("BrianEdmonds.jpg"); 
+  size(displayWidth,displayHeight,P3D);
+  img = loadImage("pixar.jpg"); 
   //fill(0);
   //stroke(100);
 }//End of setup
 void draw() {
   background(255, 255, 255);
-  /*beginShape();
+  beginShape();
   texture(img);  
   vertex(0, 0, 0, 0);
   vertex(displayWidth, 0, img.width, 0);
   vertex(displayWidth, displayHeight, img.width, img.height);
   vertex(0,displayHeight, 0, img.height);
-  endShape();*/
+  endShape();
   fill(0);
   stroke(100);
   mc.draw();
