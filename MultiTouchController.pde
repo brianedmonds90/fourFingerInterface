@@ -14,8 +14,6 @@ class MultiTouchController{//Used to process the android API touch events for ea
     }
    }
   public void touch(MotionEvent ev, int pointerId){//Method used when a touch event happens
-    if(pointerId>3)
-     return; 
     pt cTouch = new pt(ev.getX(pointerId),ev.getY(pointerId));//find the x and y coordinate of the touch event    
     temp=findClosest(cTouch);
     if(temp!=null){
@@ -31,8 +29,9 @@ class MultiTouchController{//Used to process the android API touch events for ea
           temp.lift();
       }
     }
-    afterLift(pointerId);   
+    //afterLift(pointerId);   
   }
+
   public MultiTouch findClosest(pt aa){//Returns the index of the closest disk of the container to the 
     float minDistance= Float.MAX_VALUE;
     MultiTouch closest=null;
@@ -45,15 +44,27 @@ class MultiTouchController{//Used to process the android API touch events for ea
     }
     return closest; 
   }
-  public void motion(MotionEvent me,int pointerId){//Used when a finger moves on the screen
-       int index=indexOf(pointerId);
-       if(index!=-1){
-         temp=mTContainer.get(index);
-         //log the current position of the users fingers
-         temp.currentTouch= new pt(me.getX(pointerId),me.getY(pointerId));
-        //calculate the distance moved from the previous frame and move the point
-         temp.movement(pointerId,me);
-       }
+//  public void motion(MotionEvent me,int pointerId){//Used when a finger moves on the screen
+//       int index=indexOf(pointerId);
+//       if(index!=-1){
+//         temp=mTContainer.get(index);
+//         //log the current position of the users fingers
+//         temp.currentTouch= new pt(me.getX(pointerId),me.getY(pointerId));
+//        //calculate the distance moved from the previous frame and move the point
+//         temp.movement(pointerId,me);
+//       }
+//  }  
+  public void motion(MotionEvent me){//Used when a finger moves on the screen
+    for(int i=0;i<me.getPointerCount();i++){
+      int index=indexOf(i);
+        if(index!=-1){
+          temp=mTContainer.get(index);
+          //log the current position of the users fingers
+          temp.currentTouch= new pt(me.getX(i),me.getY(i));
+          //calculate the distance moved from the previous frame and move the point
+          temp.movement(i,me);
+          }
+    }
   }  
   void draw(){//Draws the disks  
     int num=0;
@@ -85,7 +96,6 @@ class MultiTouchController{//Used to process the android API touch events for ea
         return i; 
       }  
     }
-    System.out.println("Why was this called?");
     return -1;
   } 
 }
