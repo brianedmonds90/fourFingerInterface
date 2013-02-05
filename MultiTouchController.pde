@@ -29,9 +29,7 @@ class MultiTouchController{//Used to process the android API touch events for ea
           temp.lift();
       }
     }
-    //afterLift(pointerId);   
   }
-
   public MultiTouch findClosest(pt aa){//Returns the index of the closest disk of the container to the 
     float minDistance= Float.MAX_VALUE;
     MultiTouch closest=null;

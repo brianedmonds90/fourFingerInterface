@@ -28,7 +28,7 @@ public boolean surfaceTouchEvent(MotionEvent me) {//Overwrite this android touch
   if(action==1){
     mc.touch(me,whichFinger(me)); 
   }
-  else if(action==2){
+ else if(action==2){
     mc.motion(me);
   }
   else if(action==0){
