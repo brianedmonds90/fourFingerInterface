@@ -34,10 +34,13 @@ class MultiTouch{
   }
   void draw(){
      if(this.selected){
-       fill(255,0,0);
+       fill(0,255,0);
+       this.disk.draw(); 
      }
-     this.disk.draw(); 
-     fill(0);
+     else{
+       fill(255,0,0);
+       this.disk.draw(); 
+     }
   }
   String toString(){
     String ret="";

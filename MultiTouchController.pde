@@ -8,6 +8,12 @@ class MultiTouchController{//Used to process the android API touch events for ea
         mTContainer.add(new MultiTouch()); 
       }
    }
+     MultiTouchController(){
+      mTContainer=new ArrayList<MultiTouch>();
+     // for(int i=0;i<num;i++){
+       // mTContainer.add(new MultiTouch()); 
+      //}
+   }
    public void init(){//Puts disk objects on the screen to be moved around
      for(int i=0;i<4;i++){
       mTContainer.set(i,new MultiTouch(i*100+100,i*100+200));
@@ -15,12 +21,17 @@ class MultiTouchController{//Used to process the android API touch events for ea
    }
   public void touch(MotionEvent ev, int pointerId){//Method used when a touch event happens
     pt cTouch = new pt(ev.getX(pointerId),ev.getY(pointerId));//find the x and y coordinate of the touch event    
-    temp=findClosest(cTouch);
-    if(temp!=null){
-      temp.selected=true;
-      temp.meIndex=pointerId;
-      temp.lastTouch=cTouch; //Keep track of the touch location for movement
-    }
+    //if(mTContainer.size()<4){
+    //  mTContainer.add(new MultiTouch(cTouch.x,cTouch.y));
+    //}
+    //else{
+      temp=findClosest(cTouch);
+      if(temp!=null){
+        temp.selected=true;
+        temp.meIndex=pointerId;
+        temp.lastTouch=cTouch; //Keep track of the touch location for movement
+      }
+    //}
   }
   public void lift(int pointerId){//Used when a finger is lifted
     for(int i=0;i<mTContainer.size();i++){
