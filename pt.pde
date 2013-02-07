@@ -1,5 +1,4 @@
 import android.view.MotionEvent;
-
 class pt { 
   float x=0, y=0, z=0;
   int meIndex;//Motion Event index of selected

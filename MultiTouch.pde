@@ -19,7 +19,7 @@ class MultiTouch{
    meIndex=-1;
   }
   void lift(){
-   this.meIndex=-1;
+   //this.meIndex=-1;
    this.selected=false;
   }
   void movement(int pointerId, MotionEvent ev){

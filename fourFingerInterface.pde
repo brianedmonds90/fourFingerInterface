@@ -2,7 +2,8 @@ import android.view.MotionEvent;
 // Build a container to hold the current rotation of the box
 MultiTouchController mController;
 pt test;
-PImage img;//Image background stuff
+PImage img;//Image background stuff 
+int screenWidth, screenHeight;
 
 //TurboWarpStuff********************************************************************************************
 int n=33;                                   // size of grid. Must be >2!
@@ -74,19 +75,21 @@ void pinBorder() { // pins two rings of border vertices
 
 void setup() {
  // size(displayWidth, displayHeight,  P3D);
-  mController =new MultiTouchController(4);
-   mController.init();
+  mController =new MultiTouchController();
+  //mController.init();
   size(displayWidth,displayHeight,P3D);
+  
   img = loadImage("pixar.jpg"); 
 }//End of setup
 void draw() {
-  background(255, 255, 255);
+  background(0, 0, 0);
   beginShape();
+  
   texture(img);  
-  vertex(0, 0, 0, 0);
-  vertex(displayWidth, 0, img.width, 0);
-  vertex(displayWidth, displayHeight, img.width, img.height);
-  vertex(0,displayHeight, 0, img.height);
+    vertex((displayWidth-img.width)/2, (displayHeight-img.height)/2, 0, 0);
+    vertex((img.width+displayWidth)/2, (displayHeight-img.height)/2, img.width, 0);
+    vertex((img.width+displayWidth)/2, (displayHeight+img.height)/2, img.width, img.height);
+    vertex((displayWidth-img.width)/2,(displayHeight+img.height)/2, 0, img.height);
   endShape();
   fill(0);
   stroke(100);
@@ -97,11 +100,11 @@ public boolean surfaceTouchEvent(MotionEvent me) {//Overwrite this android touch
   if(action==1){
     mController.touch(me,whichFinger(me)); 
   }
- else if(action==2){
-    mController.motion(me);
-  }
   else if(action==0){
-    mController.lift(whichFinger(me)); 
+    mController.lift(whichFinger(me));
+  }
+  else if(action==2){
+    mController.motion(me);
   }
   return super.surfaceTouchEvent(me);
 }  
@@ -113,11 +116,34 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
    if (aaction==MotionEvent.ACTION_DOWN || aaction==MotionEvent.ACTION_POINTER_DOWN) what=1;
    if (aaction==MotionEvent.ACTION_MOVE) what=2;
            if(what!=2) println("   action = "+what); // id in the order pressed (filling), except for last finger
-   return what; }
-   
+   return what; 
+   }  
 int whichFinger(MotionEvent me) {
           int pointerIndex = (me.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)>> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
           int pointerId = me.getPointerId(pointerIndex);
-           println("   finger = "+pointerId); // id in the order pressed (filling), except for last finger
+           println(" finger = "+pointerId); // id in the order pressed (filling), except for last finger
           return pointerId;
           }
+/*         
+void mousePressed() { 
+   Mouse.setToMouse(); 
+   pickVertex();  // sets pi, pj to indices of vertex closest to mouse
+   pinned[pi][pj]=true;
+   offset.setTo(dif(Mouse,G[pi][pj]));
+   nstp=0;
+   smoothing=false;
+   };  */
+   
+void pickVertex(pt a) {
+  float minDist=2*w;
+  for (int i=0; i<n; i++) for (int j=0; j<n; j++) {
+    float dist = a.disTo(G[i][j]);
+    if (dist<minDist) {minDist=dist; pi=i; pj=j;};
+    };
+  }    
+void mouseReleased() {    // unpin vertex if ctrl is pressed when mouse released
+   //if (keyPressed) if (key==CODED) if (keyCode==CONTROL)  
+   //pinned[pi][pj]=false;
+   smoothing=true; sfairInit(); fstp=0;
+   };  
+void fs() { smoothing=true; sfairInit(); fstp=0; for(int k=0; k<100; k++) if (sfair()) fstp++;}

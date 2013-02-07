@@ -1,7 +1,6 @@
 class MultiTouchController{//Used to process the android API touch events for easy use by applications
    ArrayList <MultiTouch> mTContainer;//Container for MultiTouch objects
    //http://wiki.processing.org/w/Android
-   MultiTouch temp;
    MultiTouchController(int num){
       mTContainer=new ArrayList<MultiTouch>(num);
       for(int i=0;i<num;i++){
@@ -20,26 +19,29 @@ class MultiTouchController{//Used to process the android API touch events for ea
     }
    }
   public void touch(MotionEvent ev, int pointerId){//Method used when a touch event happens
-    pt cTouch = new pt(ev.getX(pointerId),ev.getY(pointerId));//find the x and y coordinate of the touch event    
-    //if(mTContainer.size()<4){
-    //  mTContainer.add(new MultiTouch(cTouch.x,cTouch.y));
-    //}
-    //else{
-      temp=findClosest(cTouch);
+    if(mTContainer.size()<1){
+      mTContainer.add(new MultiTouch(cTouch.x,cTouch.y));
+    }
+    else{
+      MultiTouch temp =findClosest(cTouch);
       if(temp!=null){
         temp.selected=true;
         temp.meIndex=pointerId;
         temp.lastTouch=cTouch; //Keep track of the touch location for movement
-      }
-    //}
+       }
+    }
+ 
   }
   public void lift(int pointerId){//Used when a finger is lifted
-    for(int i=0;i<mTContainer.size();i++){
-      temp=mTContainer.get(i);
+    MultiTouch temp=null;
+    for(int i=0;i<mTContainer.size();i++){//iterate through the multiTouch Container object
+      temp=mTContainer.get(i); 
       if(temp.meIndex==pointerId){
-          temp.lift();
+          temp.selected=false;
+          temp.meIndex=-1;
       }
     }
+   smoothing=true; sfairInit(); fstp=0; 
   }
   public MultiTouch findClosest(pt aa){//Returns the index of the closest disk of the container to the 
     float minDistance= Float.MAX_VALUE;
@@ -53,42 +55,25 @@ class MultiTouchController{//Used to process the android API touch events for ea
     }
     return closest; 
   }
-//  public void motion(MotionEvent me,int pointerId){//Used when a finger moves on the screen
-//       int index=indexOf(pointerId);
-//       if(index!=-1){
-//         temp=mTContainer.get(index);
-//         //log the current position of the users fingers
-//         temp.currentTouch= new pt(me.getX(pointerId),me.getY(pointerId));
-//        //calculate the distance moved from the previous frame and move the point
-//         temp.movement(pointerId,me);
-//       }
-//  }  
   public void motion(MotionEvent me){//Used when a finger moves on the screen
+    MultiTouch temp=null;
     for(int i=0;i<me.getPointerCount();i++){
-      int index=indexOf(i);
-        if(index!=-1){
+      int j=me.getPointerId(i);
+      int index=indexOf(j);
+        if(index!=-1 && mTContainer.get(index).selected){
           temp=mTContainer.get(index);
           //log the current position of the users fingers
           temp.currentTouch= new pt(me.getX(i),me.getY(i));
           //calculate the distance moved from the previous frame and move the point
-          temp.movement(i,me);
-          }
+          temp.disk.move(temp.currentTouch.subtract(temp.lastTouch));
+          temp.lastTouch.set(temp.currentTouch);
+        }
     }
   }  
   void draw(){//Draws the disks  
     int num=0;
     for(int i=0;i<mTContainer.size();i++){
       mTContainer.get(i).draw(); 
-    }
-  }
-  //@params: pointerId> the Android pointerId that was lifted
-  //Method provides bookKeeping for updating pointerIndexes after a lift
-  void afterLift(int pointerId){
-    for(int i=0;i<mTContainer.size();i++){
-      temp=mTContainer.get(i);
-      if(temp.meIndex>pointerId){
-        temp.meIndex--; 
-      }  
     }
   }
   String toString(){
