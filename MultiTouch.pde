@@ -11,10 +11,17 @@ class MultiTouch{
    selected=false;
    meIndex=-1;
   }
-  MultiTouch(float x,float y){
+//  MultiTouch(float x,float y){
+//   currentTouch=new pt();
+//   lastTouch= new pt();
+//   disk=new pt(x,y);
+//   selected=false;
+//   meIndex=-1;
+//  }
+  MultiTouch(float x,float y,float z){
    currentTouch=new pt();
    lastTouch= new pt();
-   disk=new pt(x,y);
+   disk=new pt(x,y,z);
    selected=false;
    meIndex=-1;
   }
@@ -23,14 +30,14 @@ class MultiTouch{
    this.selected=false;
   }
   void movement(int pointerId, MotionEvent ev){
-    currentTouch=new pt(ev.getX(pointerId),ev.getY(pointerId));
+    currentTouch=new pt(ev.getX(pointerId),ev.getY(pointerId),0);
     disk.move(currentTouch.subtract(lastTouch));
     lastTouch.set(currentTouch);
   }
   void touch(int pointerId,MotionEvent ev){
     this.meIndex=pointerId;
     this.selected=true;
-    this.lastTouch=new pt(ev.getX(pointerId),ev.getY(pointerId));
+    this.lastTouch=new pt(ev.getX(pointerId),ev.getY(pointerId),0);
   }
   void draw(){
      if(this.selected){

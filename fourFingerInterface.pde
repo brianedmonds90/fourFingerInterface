@@ -84,7 +84,6 @@ void setup() {
 void draw() {
   background(0, 0, 0);
   beginShape();
-  
   texture(img);  
     vertex((displayWidth-img.width)/2, (displayHeight-img.height)/2, 0, 0);
     vertex((img.width+displayWidth)/2, (displayHeight-img.height)/2, img.width, 0);
@@ -99,9 +98,11 @@ public boolean surfaceTouchEvent(MotionEvent me) {//Overwrite this android touch
   int action= whichAction(me);
   if(action==1){
     mController.touch(me,whichFinger(me)); 
+    mousePressed(mController.mTContainer.get(0).currentTouch);
   }
   else if(action==0){
     mController.lift(whichFinger(me));
+     mousePressed(mController.mTContainer.get(0).currentTouch);
   }
   else if(action==2){
     mController.motion(me);
@@ -124,20 +125,23 @@ int whichFinger(MotionEvent me) {
            println(" finger = "+pointerId); // id in the order pressed (filling), except for last finger
           return pointerId;
           }
-/*         
-void mousePressed() { 
-   Mouse.setToMouse(); 
-   pickVertex();  // sets pi, pj to indices of vertex closest to mouse
+       
+void mousePressed(pt cTouch) { 
+   //Mouse.setToMouse(); 
+   pickVertex(cTouch);  // sets pi, pj to indices of vertex closest to mouse
    pinned[pi][pj]=true;
-   offset.setTo(dif(Mouse,G[pi][pj]));
+  
+   offset.setTo(dif(cTouch,G[pi][pj]));
    nstp=0;
    smoothing=false;
-   };  */
+   };  
    
 void pickVertex(pt a) {
   float minDist=2*w;
   for (int i=0; i<n; i++) for (int j=0; j<n; j++) {
+    println("G[pi] Anything?: "+G[i][j]);
     float dist = a.disTo(G[i][j]);
+    println("mark 2");
     if (dist<minDist) {minDist=dist; pi=i; pj=j;};
     };
   }    

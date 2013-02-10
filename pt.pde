@@ -5,11 +5,12 @@ class pt {
   pt(){
     this.x=0;
     this.y=0;
+    this.z=0;
   } 
-  pt(float x,float y){
-    this.x=x;
-    this.y=y;
-  }
+//  pt(float x,float y){
+//    this.x=x;
+//    this.y=y;
+//  }
   pt(float x,float y, float z){
     this.x=x;
     this.y=y;
@@ -38,22 +39,25 @@ class pt {
     this.y+=delta.y;
   }
 
-  public pt subtract(pt a){
-    return new pt(this.x-a.x,this.y-a.y);
+//  public pt subtract(pt a){
+//    return new pt(this.x-a.x,this.y-a.y);
+//  }
+    public pt subtract(pt a){
+    return new pt(this.x-a.x,this.y-a.y,this.z-a.z);
   }
   public String toString(){
-    return "("+x+","+y+")";
-    
+    return "("+x+","+y+" ,"+z+")";
   }
-  public boolean equals(pt a){
-    if(a.x==this.x&&a.y==this.y)
-    return true;
-    return false;  
-  }
+//  public boolean equals(pt a){
+//    if(a.x==this.x&&a.y==this.y)
+//    return true;
+//    return false;  
+//  }
 
   void set(pt p){
    this.x=p.x;
    this.y=p.y; 
+   this.z=p.z;
   }
   pt make() {return(new pt(x,y,z));};
   void show(float r) { pushMatrix(); translate(x,y,z); sphere(r); popMatrix();}; 
